@@ -6,7 +6,6 @@ import coverBg from "@/assets/cover-bg.png";
 const InteractiveBook = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [isFlipping, setIsFlipping] = useState(false);
   const bookRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -76,19 +75,11 @@ const InteractiveBook = () => {
     const swipeDistance = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50;
 
-    if (Math.abs(swipeDistance) > minSwipeDistance && !isFlipping) {
+    if (Math.abs(swipeDistance) > minSwipeDistance) {
       if (swipeDistance > 0 && currentPage < totalPages - 1) {
-        setIsFlipping(true);
-        setTimeout(() => {
-          setCurrentPage((prev) => prev + 1);
-          setIsFlipping(false);
-        }, 600);
+        setCurrentPage((prev) => prev + 1);
       } else if (swipeDistance < 0 && currentPage > 0) {
-        setIsFlipping(true);
-        setTimeout(() => {
-          setCurrentPage((prev) => prev - 1);
-          setIsFlipping(false);
-        }, 600);
+        setCurrentPage((prev) => prev - 1);
       }
     }
   };
@@ -100,22 +91,14 @@ const InteractiveBook = () => {
   };
 
   const nextPage = () => {
-    if (currentPage < totalPages - 1 && !isFlipping) {
-      setIsFlipping(true);
-      setTimeout(() => {
-        setCurrentPage((prev) => prev + 1);
-        setIsFlipping(false);
-      }, 600);
+    if (currentPage < totalPages - 1) {
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const prevPage = () => {
-    if (currentPage > 0 && !isFlipping) {
-      setIsFlipping(true);
-      setTimeout(() => {
-        setCurrentPage((prev) => prev - 1);
-        setIsFlipping(false);
-      }, 600);
+    if (currentPage > 0) {
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -174,57 +157,29 @@ const InteractiveBook = () => {
 
             {/* Open Book */}
             {isOpen && (
-              <div className="relative flex flex-col md:flex-row" style={{ perspective: "2500px" }}>
-                {/* Stack of pages behind */}
-                <div className="hidden md:block absolute left-0 top-0 h-[700px] w-[500px] bg-paper-warm rounded-l-lg" style={{ transform: "translateZ(-20px)", boxShadow: "inset 2px 0 8px rgba(0,0,0,0.2)" }} />
-                
-                {/* Left Page with Flip Effect (Desktop Only) */}
-                <div className="hidden md:block relative" style={{ transformStyle: "preserve-3d" }}>
+              <div className="flex flex-col md:flex-row">
+                {/* Left Page (Desktop Only) */}
+                <div className="hidden md:block">
                   {currentPage > 0 && (
-                    <div
-                      className={`transition-transform duration-700 ease-in-out`}
-                      style={{
-                        transformStyle: "preserve-3d",
-                        transformOrigin: "right center",
-                        transform: isFlipping ? "rotateY(-180deg)" : "rotateY(0deg)",
-                      }}
-                    >
-                      <BookPage
-                        pageNumber={currentPage - 1}
-                        side="left"
-                        onPrevPage={prevPage}
-                      />
-                    </div>
+                    <BookPage
+                      pageNumber={currentPage - 1}
+                      side="left"
+                      onPrevPage={prevPage}
+                    />
                   )}
                 </div>
 
                 {/* Spine (Desktop Only) */}
-                <div className="hidden h-[700px] w-8 bg-gradient-to-r from-night-deep via-night-medium to-night-deep md:block relative z-20" 
-                     style={{ boxShadow: "0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.3)" }} />
+                <div className="hidden h-[700px] w-8 bg-night-medium md:block" />
 
-                {/* Right Page with Flip Effect */}
-                <div className="relative" style={{ transformStyle: "preserve-3d" }}>
-                  <div
-                    className="transition-transform duration-700 ease-in-out"
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transformOrigin: "left center",
-                      transform: isFlipping ? "rotateY(180deg)" : "rotateY(0deg)",
-                    }}
-                  >
-                    <BookPage
-                      pageNumber={currentPage}
-                      side="right"
-                      onNextPage={nextPage}
-                      onPrevPage={prevPage}
-                      isLastPage={currentPage === totalPages - 1}
-                      isFlipping={isFlipping}
-                    />
-                  </div>
-                </div>
-
-                {/* Stack of pages in front (right side) */}
-                <div className="hidden md:block absolute right-0 top-0 h-[700px] w-[500px] bg-paper-cream rounded-r-lg" style={{ transform: "translateZ(-10px)", boxShadow: "inset -2px 0 8px rgba(0,0,0,0.15)" }} />
+                {/* Right Page */}
+                <BookPage
+                  pageNumber={currentPage}
+                  side="right"
+                  onNextPage={nextPage}
+                  onPrevPage={prevPage}
+                  isLastPage={currentPage === totalPages - 1}
+                />
               </div>
             )}
           </div>
@@ -276,14 +231,12 @@ const BookPage = ({
   onNextPage,
   onPrevPage,
   isLastPage,
-  isFlipping,
 }: {
   pageNumber: number;
   side: "left" | "right";
   onNextPage?: () => void;
   onPrevPage?: () => void;
   isLastPage?: boolean;
-  isFlipping?: boolean;
 }) => {
   const pageContent = [
     // Page 0: Pengakuan
@@ -388,72 +341,25 @@ const BookPage = ({
 
   return (
     <div
-      className={`relative h-[600px] w-[90vw] max-w-[400px] overflow-hidden bg-paper-cream md:h-[700px] md:w-[500px] ${
+      className={`relative h-[600px] w-[90vw] max-w-[400px] overflow-hidden bg-paper-cream shadow-lg md:h-[700px] md:w-[500px] ${
         side === "left" ? "rounded-l-lg" : "rounded-r-lg"
       }`}
       style={{
         background: "var(--gradient-page)",
-        boxShadow: isFlipping 
-          ? "0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(212,175,55,0.3)" 
-          : "var(--shadow-page)",
-        backfaceVisibility: "hidden",
-        transform: "translateZ(0)",
+        boxShadow: "var(--shadow-page)",
       }}
     >
       {/* Page Content */}
       <div className="relative z-10 h-full">{pageContent[pageNumber]}</div>
 
-      {/* Dynamic Shadow based on flip */}
-      {isFlipping && (
-        <div 
-          className="absolute inset-0 pointer-events-none transition-opacity duration-700"
+      {/* Page Stack Effect (Right side only) */}
+      {side === "right" && (
+        <div
+          className="absolute right-0 top-0 h-full w-2 bg-paper-warm"
           style={{
-            background: side === "left" 
-              ? "linear-gradient(to left, rgba(0,0,0,0.3), transparent 60%)"
-              : "linear-gradient(to right, rgba(0,0,0,0.3), transparent 60%)",
+            boxShadow: "inset -2px 0 8px rgba(0,0,0,0.1)",
           }}
         />
-      )}
-
-      {/* Page Stack Effect */}
-      {side === "right" && (
-        <>
-          <div
-            className="absolute right-0 top-0 h-full w-2 bg-paper-warm"
-            style={{
-              boxShadow: "inset -2px 0 8px rgba(0,0,0,0.1)",
-            }}
-          />
-          <div
-            className="absolute right-2 top-1 h-[calc(100%-8px)] w-1 bg-paper-warm/60 rounded-r"
-            style={{
-              boxShadow: "inset -1px 0 4px rgba(0,0,0,0.1)",
-            }}
-          />
-          <div
-            className="absolute right-3 top-2 h-[calc(100%-16px)] w-0.5 bg-paper-warm/30 rounded-r"
-          />
-        </>
-      )}
-
-      {side === "left" && (
-        <>
-          <div
-            className="absolute left-0 top-0 h-full w-2 bg-paper-warm"
-            style={{
-              boxShadow: "inset 2px 0 8px rgba(0,0,0,0.1)",
-            }}
-          />
-          <div
-            className="absolute left-2 top-1 h-[calc(100%-8px)] w-1 bg-paper-warm/60 rounded-l"
-            style={{
-              boxShadow: "inset 1px 0 4px rgba(0,0,0,0.1)",
-            }}
-          />
-          <div
-            className="absolute left-3 top-2 h-[calc(100%-16px)] w-0.5 bg-paper-warm/30 rounded-l"
-          />
-        </>
       )}
 
       {/* Page Texture Overlay */}
