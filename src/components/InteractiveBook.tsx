@@ -253,14 +253,11 @@ const BookPage = ({
       </div>
       <div className="mt-6 flex-1 md:mt-0">
         <div className="aspect-square overflow-hidden rounded-lg shadow-lg">
-          <div className="flex h-full flex-col items-center justify-center gap-3 border-4 border-dashed border-gold/30 bg-gradient-to-br from-paper-warm to-paper-cream p-6">
-            <div className="text-4xl">📸</div>
-            <p className="text-center font-poppins text-xs text-night-medium/70">
-              Upload foto bersama pasangan
-              <br />
-              <span className="text-[10px]">(public/images/pasangan.jpeg)</span>
-            </p>
-          </div>
+          <img
+            src="/images/pasangan.jpeg"
+            alt="Foto Bersama"
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
     </div>,
@@ -269,14 +266,11 @@ const BookPage = ({
     <div className="flex h-full flex-col justify-center p-8 md:flex-row md:items-center md:gap-8 md:p-12">
       <div className="order-2 mt-6 flex-1 md:order-1 md:mt-0">
         <div className="aspect-square overflow-hidden rounded-lg shadow-lg">
-          <div className="flex h-full flex-col items-center justify-center gap-3 border-4 border-dashed border-gold/30 bg-gradient-to-br from-paper-warm to-paper-cream p-6">
-            <div className="text-4xl">😊</div>
-            <p className="text-center font-poppins text-xs text-night-medium/70">
-              Upload foto senyuman pasangan
-              <br />
-              <span className="text-[10px]">(public/images/kenangan1.jpeg)</span>
-            </p>
-          </div>
+          <img
+            src="/images/kenangan1.jpeg"
+            alt="Kenangan Senyuman"
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
       <div className="order-1 flex-1 md:order-2">
@@ -297,14 +291,13 @@ const BookPage = ({
       </div>
       <div className="mt-6 flex-1 md:mt-0">
         <div className="aspect-video overflow-hidden rounded-lg shadow-lg">
-          <div className="flex h-full flex-col items-center justify-center gap-3 border-4 border-dashed border-gold/30 bg-gradient-to-br from-paper-warm to-paper-cream p-6">
-            <div className="text-4xl">🎥</div>
-            <p className="text-center font-poppins text-xs text-night-medium/70">
-              Upload video kenangan
-              <br />
-              <span className="text-[10px]">(public/images/keimutan.mp4)</span>
-            </p>
-          </div>
+          <video
+            src="/images/keimutan.mp4"
+            className="h-full w-full object-cover"
+            controls
+            muted
+            loop
+          />
         </div>
       </div>
     </div>,
